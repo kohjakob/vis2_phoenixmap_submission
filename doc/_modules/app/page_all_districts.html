@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.page_all_districts &mdash; Phoenixmap 1.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Phoenixmap
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Phoenixmap</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">app.page_all_districts</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for app.page_all_districts</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Streamlit page to display Phoenixmaps for all 20 parisian districts for user-selected year range. Optional display of district-wise sampled listings and heatmaps.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">streamlit</span> <span class="k">as</span> <span class="nn">st</span>
+<span class="kn">from</span> <span class="nn">streamlit_folium</span> <span class="kn">import</span> <span class="n">st_folium</span>
+<span class="kn">from</span> <span class="nn">st_pages</span> <span class="kn">import</span> <span class="n">Page</span><span class="p">,</span> <span class="n">show_pages</span>
+<span class="kn">from</span> <span class="nn">folium.plugins</span> <span class="kn">import</span> <span class="n">HeatMap</span>
+<span class="kn">import</span> <span class="nn">folium</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="n">dir_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="s1">&#39;cyan&#39;</span><span class="p">,</span> <span class="s1">&#39;magenta&#39;</span><span class="p">,</span> <span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="s1">&#39;pink&#39;</span><span class="p">,</span> <span class="s1">&#39;brown&#39;</span><span class="p">,</span> <span class="s1">&#39;lime&#39;</span><span class="p">,</span> <span class="s1">&#39;olive&#39;</span><span class="p">,</span> <span class="s1">&#39;teal&#39;</span><span class="p">,</span> <span class="s1">&#39;navy&#39;</span><span class="p">,</span> <span class="s1">&#39;salmon&#39;</span><span class="p">,</span> <span class="s1">&#39;gold&#39;</span><span class="p">,</span> <span class="s1">&#39;indigo&#39;</span><span class="p">,</span> <span class="s1">&#39;turquoise&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="load_district_polygons"><a class="viewcode-back" href="../../app.html#app.page_all_districts.load_district_polygons">[docs]</a><span class="nd">@st</span><span class="o">.</span><span class="n">cache_resource</span><span class="p">(</span><span class="n">show_spinner</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">load_district_polygons</span><span class="p">(</span><span class="n">lower_year</span><span class="p">,</span> <span class="n">upper_year</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+<span class="w">       </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Loads districts Phoenixmap polygons for year range defined by lower_year, upper_year in the defined colors.</span>
+<span class="sd">       Function is cached using st.cache_resource().</span>
+
+<span class="sd">       Parameters</span>
+<span class="sd">       ----------</span>
+<span class="sd">       lower_year : int</span>
+<span class="sd">              Minimum year of listings incorporated into calculation of Phoenixmaps</span>
+<span class="sd">       upper_year : int</span>
+<span class="sd">              Maximum year of listings incorporated into calculation of Phoenixmaps</span>
+<span class="sd">       colors: list(str)</span>
+<span class="sd">              List of colors for the districts</span>
+
+<span class="sd">       Returns</span>
+<span class="sd">       ----------</span>
+<span class="sd">       list(folium.Polygon)</span>
+<span class="sd">              List of polygons to plot on map via .add_to(folium_map)</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+       <span class="c1"># Get files, sort alphabetically</span>
+       <span class="n">polygon_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="s2">&quot;ressources/polygons_</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lower_year</span><span class="p">,</span> <span class="n">upper_year</span><span class="p">))</span>
+       <span class="n">polygon_dir_files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">polygon_dir</span><span class="p">)</span>
+       <span class="n">polygon_dir_files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+       <span class="n">district_polygons</span> <span class="o">=</span> <span class="p">[]</span>
+       <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">dir_file</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">polygon_dir_files</span><span class="p">):</span>
+              <span class="k">if</span> <span class="p">(</span><span class="n">dir_file</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+                     <span class="n">polygon_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">polygon_dir</span><span class="p">,</span> <span class="p">(</span><span class="n">dir_file</span><span class="p">))</span>
+                     <span class="c1"># Open files, create polygons</span>
+                     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">polygon_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                            <span class="n">polygon_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">polygon_data</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                                   <span class="n">folium_polygon</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Polygon</span><span class="p">(</span><span class="n">locations</span><span class="o">=</span><span class="n">polygon_data</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill_color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+                                   <span class="n">district_polygons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">folium_polygon</span><span class="p">)</span>
+
+       <span class="k">return</span> <span class="n">district_polygons</span></div>
+
+<div class="viewcode-block" id="load_tooltip_polygons"><a class="viewcode-back" href="../../app.html#app.page_all_districts.load_tooltip_polygons">[docs]</a><span class="nd">@st</span><span class="o">.</span><span class="n">cache_resource</span><span class="p">(</span><span class="n">show_spinner</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">load_tooltip_polygons</span><span class="p">(</span><span class="n">colors</span><span class="p">):</span>
+<span class="w">       </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Loads districts Phoenixmap polygons for districts with respective district-name as tooltip in the defined (semi-transparent) colors.</span>
+<span class="sd">       Function is cached using st.cache_resource().</span>
+
+<span class="sd">       Parameters</span>
+<span class="sd">       ----------</span>
+<span class="sd">       colors: list(str)</span>
+<span class="sd">              List of colors for the districts</span>
+
+<span class="sd">       Returns</span>
+<span class="sd">       ----------</span>
+<span class="sd">       list(folium.Polygon)</span>
+<span class="sd">              List of polygons to plot on map via .add_to(folium_map)</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+       <span class="n">district_border_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="s2">&quot;ressources/district_borders.json&quot;</span><span class="p">)</span>
+
+       <span class="n">district_border_polygons</span> <span class="o">=</span> <span class="p">[]</span>
+       <span class="c1"># Open file, sort alphabetically</span>
+       <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">district_border_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+              <span class="n">districts_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+              <span class="n">districts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">districts_data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+              <span class="n">districts</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+              <span class="c1"># Create polygons</span>
+              <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">district</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">districts</span><span class="p">):</span>
+                     <span class="n">district_polygon</span> <span class="o">=</span> <span class="p">[]</span>
+                     <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">districts_data</span><span class="p">[</span><span class="n">district</span><span class="p">]:</span>
+                            <span class="n">district_polygon</span><span class="o">.</span><span class="n">append</span><span class="p">(([</span><span class="n">entry</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;longitude&quot;</span><span class="p">]]))</span>
+                     <span class="n">folium_polygon</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Polygon</span><span class="p">(</span><span class="n">locations</span><span class="o">=</span><span class="n">district_polygon</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">tooltip</span><span class="o">=</span><span class="n">district</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                     <span class="n">district_border_polygons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">folium_polygon</span><span class="p">)</span>
+
+       <span class="k">return</span> <span class="n">district_border_polygons</span></div>
+
+
+<div class="viewcode-block" id="load_district_heatmaps"><a class="viewcode-back" href="../../app.html#app.page_all_districts.load_district_heatmaps">[docs]</a><span class="nd">@st</span><span class="o">.</span><span class="n">cache_resource</span><span class="p">(</span><span class="n">show_spinner</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">load_district_heatmaps</span><span class="p">(</span><span class="n">districts_listings</span><span class="p">):</span>
+<span class="w">       </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Loads districts Heatmaps for defined district_listings.</span>
+<span class="sd">       Function is cached using st.cache_resource().</span>
+
+<span class="sd">       Parameters</span>
+<span class="sd">       ----------</span>
+<span class="sd">       districts_listings: list(list(tuple(float, float)))</span>
+<span class="sd">              List of list of district listings coordinates</span>
+
+<span class="sd">       Returns</span>
+<span class="sd">       ----------</span>
+<span class="sd">       list(folium.plugins.HeatMap)</span>
+<span class="sd">              List of Heatmaps to plot on map via .add_to(folium_map)</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+       <span class="n">heatmaps</span> <span class="o">=</span> <span class="p">[]</span>
+       <span class="k">for</span> <span class="n">district</span> <span class="ow">in</span> <span class="n">districts_listings</span><span class="p">:</span>
+              <span class="n">heatmaps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HeatMap</span><span class="p">(</span><span class="n">district</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">max_zoom</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">blur</span><span class="o">=</span><span class="mi">14</span><span class="p">))</span>
+       <span class="k">return</span> <span class="n">heatmaps</span></div>
+
+<div class="viewcode-block" id="load_circle_markers"><a class="viewcode-back" href="../../app.html#app.page_all_districts.load_circle_markers">[docs]</a><span class="nd">@st</span><span class="o">.</span><span class="n">cache_resource</span><span class="p">(</span><span class="n">show_spinner</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">load_circle_markers</span><span class="p">(</span><span class="n">districts_listings</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+<span class="w">       </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Loads CircleMarkers for defined district_listings.</span>
+<span class="sd">       Function is cached using st.cache_resource().</span>
+
+<span class="sd">       Parameters</span>
+<span class="sd">       ----------</span>
+<span class="sd">       districts_listings: list(list(tuple(float, float)))</span>
+<span class="sd">              List of list of district listings coordinates</span>
+<span class="sd">       colors: list(str)</span>
+<span class="sd">              List of colors for the districts</span>
+
+<span class="sd">       Returns</span>
+<span class="sd">       ----------</span>
+<span class="sd">       list(folium.plugins.CircleMarker)</span>
+<span class="sd">              List of CircleMarkers to plot on map via .add_to(folium_map)</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+       <span class="n">markers</span> <span class="o">=</span> <span class="p">[]</span>
+       <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">district</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">districts_listings</span><span class="p">):</span>
+              <span class="k">for</span> <span class="n">house</span> <span class="ow">in</span> <span class="n">district</span><span class="p">:</span>
+                     <span class="n">markers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">folium</span><span class="o">.</span><span class="n">CircleMarker</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">house</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+       <span class="k">return</span> <span class="n">markers</span></div>
+
+<div class="viewcode-block" id="load_listings_sample"><a class="viewcode-back" href="../../app.html#app.page_all_districts.load_listings_sample">[docs]</a><span class="nd">@st</span><span class="o">.</span><span class="n">cache_resource</span><span class="p">(</span><span class="n">show_spinner</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">load_listings_sample</span><span class="p">(</span><span class="n">lower_year</span><span class="p">,</span> <span class="n">upper_year</span><span class="p">,</span> <span class="n">sample_size</span><span class="p">):</span>
+<span class="w">       </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Loads sample-sized district listing locations for year range defined by lower_year, upper_year in the defined colors.</span>
+<span class="sd">       Function is cached using st.cache_resource().</span>
+
+<span class="sd">       Parameters</span>
+<span class="sd">       ----------</span>
+<span class="sd">       lower_year : int</span>
+<span class="sd">              Minimum year of listings incorporated into calculation of Phoenixmaps</span>
+<span class="sd">       upper_year : int</span>
+<span class="sd">              Maximum year of listings incorporated into calculation of Phoenixmaps</span>
+<span class="sd">       sample_size: int</span>
+<span class="sd">              Size of sample</span>
+
+
+<span class="sd">       Returns</span>
+<span class="sd">       ----------</span>
+<span class="sd">       list(list(tuple(float, float)))</span>
+<span class="sd">              List of list of district listings coordinates</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+       <span class="n">district_listings_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="s2">&quot;ressources/district_listings.json&quot;</span><span class="p">)</span>
+
+       <span class="n">districts_listings</span> <span class="o">=</span> <span class="p">[]</span>
+       <span class="c1"># Open file, sort alphabetically</span>
+       <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">district_listings_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">read_file</span><span class="p">:</span>
+              <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">read_file</span><span class="p">)</span>
+              <span class="n">districts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+              <span class="n">districts</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+              <span class="c1"># Create listings</span>
+              <span class="k">for</span> <span class="n">district</span> <span class="ow">in</span> <span class="n">districts</span><span class="p">:</span>
+                     <span class="n">district_listing</span> <span class="o">=</span> <span class="p">[]</span>
+                     <span class="n">houses</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">district</span><span class="p">]</span>
+                     <span class="k">for</span> <span class="n">house</span> <span class="ow">in</span> <span class="n">houses</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">lower_year</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">house</span><span class="p">[</span><span class="s2">&quot;host_since&quot;</span><span class="p">][:</span><span class="mi">4</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">upper_year</span><span class="p">:</span> 
+                                   <span class="n">district_listing</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">house</span><span class="p">[</span><span class="s2">&quot;latitude&quot;</span><span class="p">],</span> <span class="n">house</span><span class="p">[</span><span class="s2">&quot;longitude&quot;</span><span class="p">]])</span>
+                     <span class="n">districts_listings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">district_listing</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">sample_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">district_listing</span><span class="p">))))</span>
+       <span class="k">return</span> <span class="n">districts_listings</span></div>
+
+<span class="n">st</span><span class="o">.</span><span class="n">set_page_config</span><span class="p">(</span>
+    <span class="n">page_title</span><span class="o">=</span><span class="s2">&quot;Paris districts&quot;</span><span class="p">,</span>
+    <span class="n">page_icon</span><span class="o">=</span><span class="s2">&quot;🥐&quot;</span><span class="p">,</span>
+    <span class="n">layout</span><span class="o">=</span><span class="s2">&quot;wide&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">show_pages</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">Page</span><span class="p">(</span><span class="s2">&quot;page_intro.py&quot;</span><span class="p">,</span> <span class="s2">&quot;Explainer&quot;</span><span class="p">,</span> <span class="s2">&quot;👋&quot;</span><span class="p">),</span>
+        <span class="n">Page</span><span class="p">(</span><span class="s2">&quot;page_all_districts.py&quot;</span><span class="p">,</span> <span class="s2">&quot;Paris districts&quot;</span><span class="p">,</span> <span class="s2">&quot;🥐&quot;</span><span class="p">),</span>
+        <span class="n">Page</span><span class="p">(</span><span class="s2">&quot;page_bourse_convex_hull.py&quot;</span><span class="p">,</span> <span class="s2">&quot;Bourse by year (from convex hull)&quot;</span><span class="p">,</span> <span class="s2">&quot;🔎&quot;</span><span class="p">),</span>
+        <span class="n">Page</span><span class="p">(</span><span class="s2">&quot;page_bourse_district_borders.py&quot;</span><span class="p">,</span> <span class="s2">&quot;Bourse by year (from district border)&quot;</span><span class="p">,</span> <span class="s2">&quot;🔎&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">col_1</span><span class="p">,</span> <span class="n">col_2</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">columns</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="n">gap</span><span class="o">=</span><span class="s2">&quot;medium&quot;</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">col_1</span><span class="p">:</span>
+       <span class="n">lower_year</span><span class="p">,</span> <span class="n">upper_year</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">select_slider</span><span class="p">(</span><span class="s1">&#39;Select a range of years&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">[</span><span class="mi">2009</span><span class="p">,</span> <span class="mi">2013</span><span class="p">,</span> <span class="mi">2017</span><span class="p">,</span> <span class="mi">2021</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="p">(</span><span class="mi">2009</span><span class="p">,</span> <span class="mi">2021</span><span class="p">))</span>
+       <span class="k">if</span><span class="p">(</span><span class="n">lower_year</span> <span class="o">&gt;</span> <span class="n">upper_year</span><span class="p">):</span>
+              <span class="n">a</span> <span class="o">=</span> <span class="n">lower_year</span>
+              <span class="n">lower_year</span> <span class="o">=</span> <span class="n">upper_year</span>
+              <span class="n">upper_year</span> <span class="o">=</span> <span class="n">a</span>
+
+       <span class="n">show_heatmap</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">checkbox</span><span class="p">(</span><span class="s1">&#39;Show Heatmaps&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+       <span class="n">show_circle_markers</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">checkbox</span><span class="p">(</span><span class="s1">&#39;Show Listings (20 sampled per district)&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">col_2</span><span class="p">:</span>
+       <span class="nb">map</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="mf">48.8586</span><span class="p">,</span> <span class="mf">2.389002</span><span class="p">],</span> <span class="n">zoom_start</span><span class="o">=</span><span class="mf">12.5</span><span class="p">)</span>
+       <span class="n">folium</span><span class="o">.</span><span class="n">TileLayer</span><span class="p">(</span><span class="s1">&#39;cartodbpositron&#39;</span><span class="p">,</span> <span class="n">control</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="nb">map</span><span class="p">)</span>
+
+       <span class="n">marker_listings_samples</span> <span class="o">=</span> <span class="n">load_listings_sample</span><span class="p">(</span><span class="n">lower_year</span><span class="p">,</span> <span class="n">upper_year</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+       <span class="n">circle_markers</span> <span class="o">=</span> <span class="n">load_circle_markers</span><span class="p">(</span><span class="n">marker_listings_samples</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+       <span class="k">if</span> <span class="n">show_circle_markers</span><span class="p">:</span>
+              <span class="k">for</span> <span class="n">circle_marker</span> <span class="ow">in</span> <span class="n">circle_markers</span><span class="p">:</span>
+                     <span class="n">circle_marker</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="nb">map</span><span class="p">)</span>
+
+       <span class="n">heatmap_listings_samples</span> <span class="o">=</span> <span class="n">load_listings_sample</span><span class="p">(</span><span class="n">lower_year</span><span class="p">,</span> <span class="n">upper_year</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+       <span class="n">heatmaps</span> <span class="o">=</span> <span class="n">load_district_heatmaps</span><span class="p">(</span><span class="n">heatmap_listings_samples</span><span class="p">)</span>
+       <span class="k">if</span> <span class="n">show_heatmap</span><span class="p">:</span>
+              <span class="k">for</span> <span class="n">show_heatmap</span> <span class="ow">in</span> <span class="n">heatmaps</span><span class="p">:</span>
+                     <span class="n">show_heatmap</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="nb">map</span><span class="p">)</span>
+
+       <span class="n">outline_polygons</span> <span class="o">=</span> <span class="n">load_district_polygons</span><span class="p">(</span><span class="n">lower_year</span><span class="p">,</span> <span class="n">upper_year</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+       <span class="k">for</span> <span class="n">polygon</span> <span class="ow">in</span> <span class="n">outline_polygons</span><span class="p">:</span>
+              <span class="n">polygon</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="nb">map</span><span class="p">)</span>
+
+       <span class="n">tooltip_polygons</span> <span class="o">=</span> <span class="n">load_tooltip_polygons</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span>
+       <span class="k">for</span> <span class="n">polygon</span> <span class="ow">in</span> <span class="n">tooltip_polygons</span><span class="p">:</span>
+              <span class="n">polygon</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="nb">map</span><span class="p">)</span>
+
+       <span class="n">st_folium</span><span class="p">(</span><span class="nb">map</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">920</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Christian Pratellesi, Jakob Kohlhas.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

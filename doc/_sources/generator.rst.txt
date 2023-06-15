@@ -1,0 +1,21 @@
+generator package
+=================
+
+Submodules
+----------
+
+generator.phoenixmap\_generator module
+--------------------------------------
+
+.. automodule:: generator.phoenixmap_generator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: generator
+   :members:
+   :undoc-members:
+   :show-inheritance:

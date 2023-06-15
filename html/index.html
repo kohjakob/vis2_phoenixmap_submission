@@ -1,0 +1,61 @@
+<html>
+<head>
+    <link href="_static/bootstrap.min.css" rel="stylesheet">
+    <title>Phoenixmap</title>
+</head>
+
+<body style="text-align: center;">
+
+    <div style="text-align: center; padding: 40px;">
+        <h2>Phoenixmap</h2>
+        <h3>Christian Pratellesi, Jakob Kohlhas</h3>
+        <p>Implementing Phoenixmaps for 2D spatial distribution visualization.</p>
+       <a href="https://phoenixmap.streamlit.app/" target="_blank"><button type="button" class="btn btn-primary">Run the app on Streamlit!</button></a>
+    </div>
+
+    <hr>
+    <a href="https://phoenixmap.streamlit.app/" target="_blank">Run app</a> | 
+    <a href="https://phoenixmap.streamlit.app/"></a>
+    <a href="https://raw.githack.com/kohjakob/vis2_phoenixmap_submission/main/doc/index.html">Code documentation</a> | 
+    <a href="https://github.com/kohjakob/vis2_phoenixmap_submission">Source code on GitHub</a>
+    <hr>
+    <div style="text-align: left; width:70%; padding: 40px; margin: 0 auto">
+        <h5>About this application</h5>
+        <p>
+        For the course "Visualisierung 2" we implemented a 2D spatial distribution visualization based on the approach presented in the paper "Phoenixmap: An Abstract Approach to Visualize 2D Spatial Distributions" [1].<br>
+        We chose to visualize AirBnb listings in Paris from a public kaggle dataset [2].
+        Multiple views were implemented allowing display of overlayed Phoenixmaps generated with different settings.
+        We experimented with using a convex hull (as proposed in the paper) as well as the districts actual border (derived from public shapefiles [3]) as outline.
+        </p>
+        <div style="text-align: center;">
+            <hr>
+            <img src="_static/construction_explainer.png" style="width: 100%;">
+            <p>
+                Explanation of the method of construction for a Phoenixmap from 2D points.
+            </p>
+            <hr>
+            <img src="_static/districts_example.png" style="width: 100%;">
+            <p>
+                Application screenshot: Phoenixmaps for all parisian districts
+            </p>
+            <hr>
+            <img src="_static/district_border_example.jpg" style="width: 100%;">
+            <p>
+                Application screenshot: Overlaying Phoenixmaps (from district border) for 2 years for district "Bourse"
+            </p>
+            <hr>
+            <img src="_static/convex_hull_example.png" style="width: 100%;">
+            <p>
+                Application screenshot: Overlaying Phoenixmaps (from convex hull of listings) for 2 years for district "Bourse"
+            </p>
+        </div>
+        
+    <hr>
+    References:<br>
+    [1] Zhao et. al, "Phoenixmap: An Abstract Approach to Visualize 2D Spatial Distributions", 2020, https://arxiv.org/abs/2002.00732<br>
+    [2] https://www.kaggle.com/datasets/mysarahmadbhat/airbnb-listings-reviews, last visited: 13.06.2023 16:00<br>
+    [3] https://data.metabolismofcities.org/library/38838/, last visited: 13.06.2023 16:00
+    </div>
+
+</body>
+</html>

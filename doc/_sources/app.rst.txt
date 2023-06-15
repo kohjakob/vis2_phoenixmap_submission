@@ -1,0 +1,45 @@
+app package
+===========
+
+Submodules
+----------
+
+app.page\_all\_districts module
+-------------------------------
+
+.. automodule:: app.page_all_districts
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+app.page\_bourse\_convex\_hull module
+-------------------------------------
+
+.. automodule:: app.page_bourse_convex_hull
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+app.page\_bourse\_district\_borders module
+------------------------------------------
+
+.. automodule:: app.page_bourse_district_borders
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+app.page\_intro module
+----------------------
+
+.. automodule:: app.page_intro
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: app
+   :members:
+   :undoc-members:
+   :show-inheritance:
